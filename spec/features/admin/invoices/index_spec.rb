@@ -93,9 +93,9 @@ end
         expect("jamisonordway").to appear_before("mikedao")
         expect(page).to have_content('pull request: 53')
         expect(page).to have_content('little-esty-shop')
-        expect(page).to have_link("Invoice Number #{@invoice_1.id}", href: "/invoices/#{@invoice_1.id}")
-        expect(page).to have_link("Invoice Number #{@invoice_2.id}", href: "/invoices/#{@invoice_2.id}")
-        expect(page).to have_link("Invoice Number #{@invoice_3.id}", href: "/invoices/#{@invoice_3.id}")
+        expect(page).to have_link("Invoice Number #{@invoice_1.id}", href: "/admin/invoices/#{@invoice_1.id}")
+        expect(page).to have_link("Invoice Number #{@invoice_2.id}", href: "/admin/invoices/#{@invoice_2.id}")
+        expect(page).to have_link("Invoice Number #{@invoice_3.id}", href: "/admin/invoices/#{@invoice_3.id}")
       end
     end
   end 
