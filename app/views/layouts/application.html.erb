@@ -11,7 +11,9 @@
 
   <body>
   <%= flash[:notice] %>
+
     <%= yield %>
+    <%if @github_info.class == Array%>
     <%= @github_info.repo_name %>
     <p> Contributors:</p><% @github_info.contributors.each do |contributor| %>
       <%= contributor %>
@@ -21,6 +23,7 @@
       <%@github_info.commits.each do |key, value|%>
         <p><%="#{key} has #{value} number of commits" %></p>
       <%end%> </h4>
+    <%end%>
 
   </body>
 </html>
