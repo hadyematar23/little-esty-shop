@@ -25,7 +25,7 @@ Step 1: DTR (Define the Relationship)
 - We first began the project by completing a DTR to understand how each member prefer to work, their strengths and weaknesses, and any scheduling conflicts that might have come up.
 
 Step 2: GitHub & Setup 
-- Then we selected one member to fork and clone the respo so we had our own copy to begin working. They invited the rest of the team as collaborators and created a Github Projects page for time and project management. (That's when we also adopted the very snazzy name of `Team JazzyCoders` as can be seen [here](https://github.com/users/hadyematar23/projects/1).
+- Then we selected one member to fork and clone the respo so we had our own copy to begin working. They invited the rest of the team as collaborators and created a Github Projects page for time and project management. (That's when we also adopted the very snazzy name of `Team JazzyCoders` as can be seen [here](https://github.com/users/hadyematar23/projects/1).)
 
 Step 3: Heroku Setup
 - Next, we set up the connection to `Heroku`. Here we encountered a few snags but with the documentation and notes from previous projects we were able to solve those problems.
