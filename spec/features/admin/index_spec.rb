@@ -200,23 +200,18 @@ RSpec.describe '/admin', type: :feature do
       it "each invoice id is a link to that invoice's admin show page" do
         visit '/admin'
         within "#invoice_info-#{@invoice17.id}" do
-          expect(page).to have_link("#{@invoice17.id}", :href=>"/invoices/#{@invoice17.id}")
+          expect(page).to have_link("#{@invoice17.id}", :href=>"/admin/invoices/#{@invoice17.id}")
         end
 
         within "#invoice_info-#{@invoice19.id}" do
-          expect(page).to have_link("#{@invoice19.id}", :href=>"/invoices/#{@invoice19.id}")
+          expect(page).to have_link("#{@invoice19.id}", :href=>"/admin/invoices/#{@invoice19.id}")
         end
 
         within "#invoice_info-#{@invoice20.id}" do
-          expect(page).to have_link("#{@invoice20.id}", :href=>"/invoices/#{@invoice20.id}")
+          expect(page).to have_link("#{@invoice20.id}", :href=>"/admin/invoices/#{@invoice20.id}")
         end
 
-        #should i test this: 
-        # within "#invoice_info-#{@invoice19.id}" do
-        #   expect(page).to have_link("#{@invoice19.id}", :href=>"/invoices/#{@invoice19.id}")
-        #   click_link("#{@invoice19.id}")
-        #   expect(current_path).to eq("/invoices/#{@invoice19.id}")
-        # end
+
       end
 
       it "next to each id I see the date that invoice was created (ex: 'Monday, July 18, 2019')" do
