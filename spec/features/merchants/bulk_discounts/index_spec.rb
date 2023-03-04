@@ -5,8 +5,8 @@ RSpec.describe '/merchants/:id/discounts' do
     before do
       @merchant2 = Merchant.create!(name: "Hady's Beach Shack")
 
-      @discounts1 = @merchant2.bulk_discounts.create(title: "Small Discount", quantity_threshold: 5, percentage_discount: 20.00)
-      @discounts2 = @merchant2.bulk_discounts.create(title: "Big Discount", quantity_threshold: 10, percentage_discount: 30.00)
+      @discounts1 = @merchant2.bulk_discounts.create(title: "Small Discount", quantity_threshold: 5, percentage_discount: 20.0)
+      @discounts2 = @merchant2.bulk_discounts.create(title: "Big Discount", quantity_threshold: 10, percentage_discount: 30.0)
     end
 
     it 'I see bulf discount info' do
@@ -28,17 +28,30 @@ RSpec.describe '/merchants/:id/discounts' do
 
       click_link(@discounts1.title)
 
-      expect(current_path).to eq("/bulk_discounts/#{@discounts1.id}")
+      expect(current_path).to eq("/merchants/#{@merchant2.id}/bulk_discounts/#{@discounts1.id}")
     end
 
-    it 'I should see a link to create a new discount' do
+    it 'I should see a link to create a new bulk discount' do
       visit merchant_bulk_discounts_path(@merchant2)
 
       expect(page).to have_link("New Discount")
 
       click_link("New Discount")
 
-      expect(current_path).to eq("./discounts/new")
+      expect(current_path).to eq("/merchants/#{@merchant2.id}/bulk_discounts/new")
     end
+
+    it "I should see a link to delete a bulk discount" do
+      visit merchant_bulk_discounts_path(@merchant2)
+
+      expect(page).to have_link("Delete Discount #{@discount2}")
+
+      click_link("Delete Discount #{@discount2}")
+
+      expect(current_path).to eq(merchant_bulk_discounts_path(@merchant2))
+      expect(page).to have_content(@discount1)
+      expect(page).to_not have_content(@discount2)
+    end
+
   end
 end
