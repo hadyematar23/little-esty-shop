@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe '/bulk_discounts/:id' do
+RSpec.describe '/merchants/:merchant_id/bulk_discounts/:id' do
   describe 'When I vist the bulk discount show page' do
     before do
       @merchant2 = Merchant.create!(name: "Hady's Beach Shack")
@@ -10,7 +10,7 @@ RSpec.describe '/bulk_discounts/:id' do
     end
 
     it 'I see the bulk discount info' do
-      visit bulk_discount_path(@discounts1)
+      visit merchant_bulk_discount_path(@merchant2, @discounts1)
 
       expect(page).to have_content(@discounts1.title)
       expect(page).to have_content(@discounts1.quantity_threshold)
