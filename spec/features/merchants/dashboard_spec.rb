@@ -54,6 +54,9 @@ RSpec.describe 'Merchant Dashboard Feature Spec' do
     @merchant1 = Merchant.create!(name: "Mel's Travels")
     @merchant2 = Merchant.create!(name: "Hady's Beach Shack")
 
+    @discounts1 = @merchant2.bulk_discounts.create(title: "Small Discount", quantity_threshold: 5, percentage_discount: 20.00)
+    @discounts2 = @merchant2.bulk_discounts.create(title: "Big Discount", quantity_threshold: 10, percentage_discount: 30.00)
+
     @item1 = Item.create!(name: "Salt", description: "it is salty", unit_price: 1200, merchant: @merchant1)
     @item2 = Item.create!(name: "Pepper", description: "it is peppery", unit_price: 1150, merchant: @merchant1)
     @item3 = Item.create!(name: "Spices", description: "it is spicy", unit_price: 1325, merchant: @merchant1)
@@ -235,5 +238,18 @@ RSpec.describe 'Merchant Dashboard Feature Spec' do
         expect(@invoice19.created_at.strftime("%A, %B %e, %Y")).to appear_before(@invoice20.created_at.strftime("%A, %B %e, %Y"))
       end
     end
+
+    describe 'merchant bulk discounts' do
+      it 'should see link that will take me to bulk discounts index page' do
+        visit "/merchants/#{@merchant2.id}/dashboard"
+
+        expect(page).to have_link("Discounts")
+
+        click_link("Discounts")
+
+        expect(current_path).to eq("/merchants/#{@merchant2.id}/discounts")
+      end
+    end
   end
+
 end 
