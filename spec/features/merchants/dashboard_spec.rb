@@ -251,5 +251,4 @@ RSpec.describe 'Merchant Dashboard Feature Spec' do
       end
     end
   end
-
 end 

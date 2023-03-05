@@ -6,7 +6,7 @@ class Merchants::BulkDiscountsController < ApplicationController
 
   def show
     @merchant = Merchant.find(params[:merchant_id])
-    @discount = BulkDiscount.find(params[:id])
+    @discount = @merchant.bulk_discounts.find(params[:id])
   end
 
   def new
@@ -23,6 +23,24 @@ class Merchants::BulkDiscountsController < ApplicationController
       redirect_to "/merchants/#{@merchant.id}/bulk_discounts/new"
       flash.notice = discount.errors.full_messages.join(", ")
     end
+  end
+
+  def edit
+    @merchant = Merchant.find(params[:merchant_id]) 
+    @discount = BulkDiscount.find(params[:id])
+  end
+
+  def update
+    @merchant = Merchant.find(params[:merchant_id]) 
+    @discount = BulkDiscount.find(params[:id])
+    @discount.update(bulk_discount_params)
+    redirect_to merchant_bulk_discount_path(@merchant, @discount)
+  end
+
+  def destroy
+    @merchant = Merchant.find(params[:merchant_id]) 
+    @merchant.bulk_discounts.destroy(params[:id])
+    redirect_to "/merchants/#{@merchant.id}/bulk_discounts"
   end
 
   private

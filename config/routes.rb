@@ -31,7 +31,7 @@ Rails.application.routes.draw do
   post '/merchants', to: "merchants#create"
 
   resources :merchants, only: :dashboard do
-    resources :bulk_discounts, only: [:show, :index, :new, :create], controller: "merchants/bulk_discounts"
+    resources :bulk_discounts, controller: "merchants/bulk_discounts"
   end
 
   # resources :bulk_discounts, only: :show
