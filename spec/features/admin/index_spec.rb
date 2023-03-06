@@ -222,7 +222,7 @@ RSpec.describe '/admin', type: :feature do
         end
 
         within "#invoice_info-#{@invoice20.id}" do
-          expect(page).to have_content("Created: #{@invoice20.created_at.strftime("%A, %B %e, %Y")}")
+          expect(page).to have_content("ID number: #{@invoice20.id} Created: #{@invoice20.created_at.strftime("%A, %B %e, %Y")}")
         end
       end
 
