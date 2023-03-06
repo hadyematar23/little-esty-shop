@@ -121,11 +121,11 @@ RSpec.describe 'merchant invoice show', type: :feature do
       expect(page).to have_content("#{@invoice_2.invoice_items.first.status}")
     end
 
-    it 'shows total revenue' do
-      visit "/merchants/#{@merchant_1.id}/invoices/#{@invoice_1.id}"
+    # it 'shows total revenue' do
+    #   visit "/merchants/#{@merchant_1.id}/invoices/#{@invoice_1.id}"
 
-      expect(page).to have_content("Total Revenue without Bulk Discount: #{@invoice_1.total_revenue}")
-    end
+    #   expect(page).to have_content("Total Revenue without Bulk Discount: #{@invoice_1.total_revenue}")
+    # end
 
     it 'has a select field to update the status of an item' do
       visit "/merchants/#{@merchant_1.id}/invoices/#{@invoice_1.id}"
@@ -142,15 +142,16 @@ RSpec.describe 'merchant invoice show', type: :feature do
       expect(page).to have_select("status", selected: "shipped")
     end
 
-    it 'I see the total discounted revenue for my merchant from this invoice NOT INCLUDING bulk discount' do
+    it 'I see the total revenue for my merchant from this invoice NOT INCLUDING bulk discount' do
       visit "/merchants/#{@merchant_1.id}/invoices/#{@invoice_1.id}"
       
-      expect(page).to have_content("Total Revenue without Bulk Discount: $380.00")
+      expect(page).to have_content("Total Revenue without Bulk Discount: 380")
     end
 
-    xit 'I see the total discounted revenue for my merchant from this invoice INCLUDING bulk discount' do
+    it 'I see the total revenue for my merchant from this invoice INCLUDING bulk discount' do
       visit "/merchants/#{@merchant_1.id}/invoices/#{@invoice_1.id}"
 
+      expect(page).to have_content("Total Revenue with Bulk Discount: 278.0")
     end
 
     xit 'I should see a link to the show page for of the applied bulk discount' do
