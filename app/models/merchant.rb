@@ -19,7 +19,6 @@ class Merchant < ApplicationRecord
     .order("transaction_count DESC")
     .limit(5)
   end
-  
 
   def unshipped_items
     invoices.select("invoice_items.status, invoices.*, items.name AS item_name")

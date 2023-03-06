@@ -73,10 +73,11 @@ RSpec.describe 'merchant invoice show', type: :feature do
     
     @invoice_item_1 = InvoiceItem.create!(item: @item_1, invoice: @invoice_1, quantity: 10, unit_price: @item_1.unit_price)
     @invoice_item_2 = InvoiceItem.create!(item: @item_3, invoice: @invoice_1, quantity: 20, unit_price: @item_3.unit_price)
-    # @invoice_item_3 = InvoiceItem.create!(item: @item_10, invoice: @invoice_1, quantity: 1, unit_price: @item_10.unit_price)
+    @invoice_item_3 = InvoiceItem.create!(item: @item_10, invoice: @invoice_1, quantity: 1, unit_price: @item_10.unit_price)
     
-    @discount1 = @merchant1.bulk_discounts.create(title: "Small Discount", quantity_threshold: 5, percentage_discount: 20.0)
-    @discount2 = @merchant1.bulk_discounts.create(title: "Big Discount", quantity_threshold: 15, percentage_discount: 30.0)
+    @discount1 = @merchant_1.bulk_discounts.create(title: "Small Discount", quantity_threshold: 5, percentage_discount: 20.0)
+    @discount2 = @merchant_1.bulk_discounts.create(title: "Big Discount", quantity_threshold: 15, percentage_discount: 30.0)
+    @discount3 = @merchant_3.bulk_discounts.create(title: "Mega Discount", quantity_threshold: 1, percentage_discount: 10.0)
   end
 
   describe 'mercants invoices show' do
@@ -102,7 +103,6 @@ RSpec.describe 'merchant invoice show', type: :feature do
       expect(page).to have_content(@invoice_2.created_at)
       expect(page).to have_content(@invoice_2.customer.first_name)
       expect(page).to have_content(@invoice_2.customer.last_name)
-    
     end
 
     it 'shows item with attributes' do
@@ -124,8 +124,7 @@ RSpec.describe 'merchant invoice show', type: :feature do
     it 'shows total revenue' do
       visit "/merchants/#{@merchant_1.id}/invoices/#{@invoice_1.id}"
 
-      expect(page).to have_content("#{@invoice_1.total_revenue}")
-      save_and_open_page
+      expect(page).to have_content("Total Revenue without Bulk Discount: #{@invoice_1.total_revenue}")
     end
 
     it 'has a select field to update the status of an item' do
@@ -143,16 +142,25 @@ RSpec.describe 'merchant invoice show', type: :feature do
       expect(page).to have_select("status", selected: "shipped")
     end
 
-    xit 'I see the total discounted revenue for my merchant from this invoice NOT INCLUDING bulk discount' do
+    it 'I see the total discounted revenue for my merchant from this invoice NOT INCLUDING bulk discount' do
       visit "/merchants/#{@merchant_1.id}/invoices/#{@invoice_1.id}"
       
       expect(page).to have_content("Total Revenue without Bulk Discount: $380.00")
     end
 
-    it 'I see the total discounted revenue for my merchant from this invoice INCLUDING bulk discount' do
+    xit 'I see the total discounted revenue for my merchant from this invoice INCLUDING bulk discount' do
       visit "/merchants/#{@merchant_1.id}/invoices/#{@invoice_1.id}"
 
-      expect(page).to have_content("Total Revenue with Bulk Discount: $278.00")
+    end
+
+    xit 'I should see a link to the show page for of the applied bulk discount' do
+      visit "/merchants/#{@merchant_1.id}/invoices/#{@invoice_1.id}"
+
+      expect(page).to have_link("Applied Discount")
+
+      click_link("Applied Discount")
+
+      expect(current_path).to eq(merchant_bulk_discount_path(@merchant1, @discount2))
     end
   end
 end

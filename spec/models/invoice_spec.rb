@@ -7,6 +7,7 @@ RSpec.describe Invoice, type: :model do
     it { should have_many :invoice_items }
     it { should have_many(:items).through(:invoice_items) }
     it { should have_many(:merchants).through(:items) }
+    it { should have_many(:bulk_discounts).through(:merchants)}
     it { should define_enum_for(:status).with_values(["in progress", "completed", "cancelled"]) }
   end
 
@@ -65,33 +66,41 @@ RSpec.describe Invoice, type: :model do
   describe 'instance methods' do
     before(:each) do
       @merchant_1 = Merchant.create!(name: "Mel's Travels")
-      @merchant_2 = Merchant.create!(name: "Hady's Beach Shack")
+      # @merchant_2 = Merchant.create!(name: "Hady's Beach Shack")
       @merchant_3 = Merchant.create!(name: "Huy's Cheese")
   
       @item_1 = Item.create!(name: "Salt", description: "it is salty", unit_price: 12, merchant: @merchant_1)
-      @item_2 = Item.create!(name: "Pepper", description: "it is peppery", unit_price: 11, merchant: @merchant_1)
+      # @item_2 = Item.create!(name: "Pepper", description: "it is peppery", unit_price: 11, merchant: @merchant_1)
       @item_3 = Item.create!(name: "Spices", description: "it is spicy", unit_price: 13, merchant: @merchant_1)
-      @item_4 = Item.create!(name: "Sand", description: "its all over the place", unit_price: 14, merchant: @merchant_2)
-      @item_5 = Item.create!(name: "Water", description: "see item 1, merchant 1", unit_price: 15, merchant: @merchant_2)
-      @item_6 = Item.create!(name: "Rum", description: "good for your health", unit_price: 33, merchant: @merchant_2)
-      @item_7 = Item.create!(name: "American", description: "gud cheese", unit_price: 34, merchant: @merchant_3)
-      @item_8 = Item.create!(name: "Swiss", description: "holes in cheese", unit_price: 92, merchant: @merchant_3)
-      @item_9 = Item.create!(name: "Cheddar", description: "SHARP!", unit_price: 1123, merchant: @merchant_3)
+      # @item_4 = Item.create!(name: "Sand", description: "its all over the place", unit_price: 14, merchant: @merchant_2)
+      # @item_5 = Item.create!(name: "Water", description: "see item 1, merchant 1", unit_price: 15, merchant: @merchant_2)
+      # @item_6 = Item.create!(name: "Rum", description: "good for your health", unit_price: 33, merchant: @merchant_2)
+      # @item_7 = Item.create!(name: "American", description: "gud cheese", unit_price: 34, merchant: @merchant_3)
+      # @item_8 = Item.create!(name: "Swiss", description: "holes in cheese", unit_price: 92, merchant: @merchant_3)
+      # @item_9 = Item.create!(name: "Cheddar", description: "SHARP!", unit_price: 1123, merchant: @merchant_3)
       @item_10 = Item.create!(name: "Imaginary", description: "it is whatever you think it is", unit_price: 442, merchant: @merchant_3)
       
       @customer_1 = Customer.create!(first_name: "Steve", last_name: "Stevinson")
-      @customer_2 = Customer.create!(first_name: "Dave", last_name: "Davinson")
+      # @customer_2 = Customer.create!(first_name: "Dave", last_name: "Davinson")
       
       @invoice_1 = Invoice.create!(customer: @customer_1)
-      @invoice_2 = Invoice.create!(customer: @customer_2, status: 0)
+      # @invoice_2 = Invoice.create!(customer: @customer_2, status: 0)
    
-      InvoiceItem.create!(item: @item_1, invoice: @invoice_1, quantity: 1, unit_price: @item_1.unit_price)
-      InvoiceItem.create!(item: @item_2, invoice: @invoice_1, quantity: 5, unit_price: @item_2.unit_price)  
+      # InvoiceItem.create!(item: @item_1, invoice: @invoice_1, quantity: 1, unit_price: @item_1.unit_price)
+      # InvoiceItem.create!(item: @item_2, invoice: @invoice_1, quantity: 5, unit_price: @item_2.unit_price)  
+
+      @invoice_item_1 = InvoiceItem.create!(item: @item_1, invoice: @invoice_1, quantity: 10, unit_price: @item_1.unit_price)
+      @invoice_item_2 = InvoiceItem.create!(item: @item_3, invoice: @invoice_1, quantity: 20, unit_price: @item_3.unit_price)
+      @invoice_item_3 = InvoiceItem.create!(item: @item_10, invoice: @invoice_1, quantity: 1, unit_price: @item_10.unit_price)
+      
+      @discount1 = @merchant_1.bulk_discounts.create(title: "Small Discount", quantity_threshold: 5, percentage_discount: 20.0)
+      @discount2 = @merchant_1.bulk_discounts.create(title: "Big Discount", quantity_threshold: 15, percentage_discount: 30.0)
+      @discount3 = @merchant_3.bulk_discounts.create(title: "Mega Discount", quantity_threshold: 1, percentage_discount: 10.0)
     end
 
     describe '#total_revenue' do
       it 'multiplies the sum of the unit price and quantity' do
-        expect(@invoice_1.total_revenue).to eq(67)
+        expect(@invoice_1.total_revenue).to eq(822)
       end
     end
 
@@ -99,6 +108,18 @@ RSpec.describe Invoice, type: :model do
       it 'returns the date of the invoice in yyyy/mm/dd format' do
         @invoice_1.created_at = "Mon, 27 Feb 2023 22:51:42 UTC +00:00"
         expect(@invoice_1.format_date).to eq("2023-02-27")
+      end
+    end
+
+    describe "#discount_revenue" do
+      it 'should return the total bulk discount applied' do
+        expect(@invoice_1.discount_revenue).to eq(146.2)
+      end
+    end
+
+    describe "#merch_discount_revenue" do
+      it 'should return the total bulk discount for the merchant with bulk discount applied' do
+        expect(@invoice_1.merch_discount_revenue).to eq(102.0)
       end
     end
   end
