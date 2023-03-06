@@ -18,7 +18,5 @@
   </div>
 <% end %>
 
-<%# <p> Total Revenue without Bulk Discount: <%= @invoice.total_revenue %>
-<%#<p> Total Revenue with Bulk Discount: <%= number_to_currency(@invoice.total_revenue - @invoice.discount_revenue) %>
-
-    <%# <p> <%= link_to "Applied Discount", merchant_bulk_discount_path(@merchant1, invoice_item...)  </p> %>
+<p> Total Revenue without Bulk Discount: <%= @invoice.total_revenue_for_merchant(@merchant) %>
+<p> Total Revenue with Bulk Discount: <%= @invoice.total_revenue_for_merchant(@merchant) - @invoice.merch_discount_revenue(@merchant) %>
