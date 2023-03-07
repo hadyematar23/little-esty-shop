@@ -1,6 +1,19 @@
 require 'rails_helper'
 
 RSpec.describe "/merchants/:merchant_id/bulk_discounts/new" do
+  before do   
+    holiday_call = File.read("spec/fixtures/holiday_call.json")
+    stub_request(:get, 'https://date.nager.at/api/v3/NextPublicHolidays/US')
+    .with(
+      headers: {
+        'Accept'=>'*/*',
+        'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+        'User-Agent'=>'Faraday v2.7.4'
+         }
+    )
+    .to_return(status: 200, body: holiday_call, headers: {})
+  end
+  
   before do
     @merchant2 = Merchant.create!(name: "Hady's Beach Shack")
   end
