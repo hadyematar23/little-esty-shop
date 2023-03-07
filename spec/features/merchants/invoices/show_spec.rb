@@ -74,6 +74,7 @@ RSpec.describe 'merchant invoice show', type: :feature do
     @invoice_item_1 = InvoiceItem.create!(item: @item_1, invoice: @invoice_1, quantity: 10, unit_price: @item_1.unit_price)
     @invoice_item_2 = InvoiceItem.create!(item: @item_3, invoice: @invoice_1, quantity: 20, unit_price: @item_3.unit_price)
     @invoice_item_3 = InvoiceItem.create!(item: @item_10, invoice: @invoice_1, quantity: 1, unit_price: @item_10.unit_price)
+    @invoice_item_5 = InvoiceItem.create!(item: @item_2, invoice: @invoice_1, quantity: 3, unit_price: @item_2.unit_price)
     
     @discount1 = @merchant_1.bulk_discounts.create(title: "Small Discount", quantity_threshold: 5, percentage_discount: 20.0)
     @discount2 = @merchant_1.bulk_discounts.create(title: "Big Discount", quantity_threshold: 15, percentage_discount: 30.0)
@@ -145,23 +146,42 @@ RSpec.describe 'merchant invoice show', type: :feature do
     it 'I see the total revenue for my merchant from this invoice NOT INCLUDING bulk discount' do
       visit "/merchants/#{@merchant_1.id}/invoices/#{@invoice_1.id}"
       
-      expect(page).to have_content("Total Revenue without Bulk Discount: 380")
+      expect(page).to have_content("Total Revenue without Bulk Discount: 413")
     end
 
     it 'I see the total revenue for my merchant from this invoice INCLUDING bulk discount' do
       visit "/merchants/#{@merchant_1.id}/invoices/#{@invoice_1.id}"
 
-      expect(page).to have_content("Total Revenue with Bulk Discount: 278.0")
+      expect(page).to have_content("Total Revenue with Bulk Discount: 311.0")
     end
 
-    xit 'I should see a link to the show page for of the applied bulk discount' do
+    it 'I should see a link to the show page for of the applied bulk discount' do
       visit "/merchants/#{@merchant_1.id}/invoices/#{@invoice_1.id}"
 
-      expect(page).to have_link("Applied Discount")
+      within "#item-#{@invoice_item_1.id}" do
+        expect(page).to have_link("Applied Discount")
+      end
 
-      click_link("Applied Discount")
+      within "#item-#{@invoice_item_2.id}" do
+        expect(page).to have_link("Applied Discount")
+      end
 
-      expect(current_path).to eq(merchant_bulk_discount_path(@merchant1, @discount2))
+      within "#item-#{@invoice_item_5.id}" do
+        expect(page).to have_content("No Discount Applied")
+      end
+    end
+    
+    it 'When I click on link, I am taken to bulk discount show page' do
+      visit "/merchants/#{@merchant_1.id}/invoices/#{@invoice_1.id}"
+
+      within "#item-#{@invoice_item_1.id}" do
+        click_link("Applied Discount")
+      end
+  
+      expect(current_path).to eq(merchant_bulk_discount_path(@merchant_1, @discount1))
+      expect(page).to have_content(@discount1.title)
+      expect(page).to have_content(@discount1.quantity_threshold)
+      expect(page).to have_content(@discount1.percentage_discount)
     end
   end
 end
