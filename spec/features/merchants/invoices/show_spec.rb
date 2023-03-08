@@ -84,9 +84,9 @@ RSpec.describe 'merchant invoice show', type: :feature do
   describe 'mercants invoices show' do
     it 'shows all invoices with links to their show page' do
       visit "merchants/#{@merchant_1.id}/invoices"
-
-      click_link("#{@invoice_1.id}")
       
+      
+      click_link("#{@invoice_1.id}")
       expect(current_path).to eq("/merchants/#{@merchant_1.id}/invoices/#{@invoice_1.id}")
       expect(page).to have_content(@invoice_1.id)
       expect(page).to have_content(@invoice_1.status)
@@ -131,7 +131,7 @@ RSpec.describe 'merchant invoice show', type: :feature do
     it 'has a select field to update the status of an item' do
       visit "/merchants/#{@merchant_1.id}/invoices/#{@invoice_1.id}"
 
-      within "#item-" do 
+      within "#item-#{@invoice_item_1.id}" do 
         expect(page).to have_select("status", selected: "pending")
         expect(page).to_not have_select("status", selected: "shipped")
 
