@@ -210,19 +210,17 @@ RSpec.describe '/admin', type: :feature do
         within "#invoice_info-#{@invoice20.id}" do
           expect(page).to have_link("#{@invoice20.id}", :href=>"/admin/invoices/#{@invoice20.id}")
         end
-
-
       end
 
       it "next to each id I see the date that invoice was created (ex: 'Monday, July 18, 2019')" do
         visit '/admin'
         
         within "#invoice_info-#{@invoice17.id}" do
-          expect(page).to have_content("Created: #{@invoice17.created_at.strftime("%A, %B %e, %Y")}")
+          expect(page).to have_content("ID number: #{@invoice17.id} Created: #{@invoice17.created_at.strftime("%A, %B%e, %Y")}")
         end
 
         within "#invoice_info-#{@invoice20.id}" do
-          expect(page).to have_content("ID number: #{@invoice20.id} Created: #{@invoice20.created_at.strftime("%A, %B %e, %Y")}")
+          expect(page).to have_content("ID number: #{@invoice20.id} Created: #{@invoice20.created_at.strftime("%A, %B%e, %Y")}")
         end
       end
 
@@ -232,6 +230,5 @@ RSpec.describe '/admin', type: :feature do
         expect(@invoice19.created_at.strftime("%A, %B %e, %Y")).to appear_before(@invoice20.created_at.strftime("%A, %B %e, %Y"))
       end
     end
-
   end
 end
