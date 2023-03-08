@@ -72,14 +72,17 @@ RSpec.describe Invoice, type: :model do
       @item_1 = Item.create!(name: "Salt", description: "it is salty", unit_price: 12, merchant: @merchant_1)
       @item_3 = Item.create!(name: "Spices", description: "it is spicy", unit_price: 13, merchant: @merchant_1)
       @item_10 = Item.create!(name: "Imaginary", description: "it is whatever you think it is", unit_price: 442, merchant: @merchant_3)
+      @item_15 = Item.create!(name: "Imaginary2", description: "it is whatever you think it is", unit_price: 10, merchant: @merchant_1)
       
       @customer_1 = Customer.create!(first_name: "Steve", last_name: "Stevinson")
       
       @invoice_1 = Invoice.create!(customer: @customer_1)
+      @invoice_2 = Invoice.create!(customer: @customer_1)
 
       @invoice_item_1 = InvoiceItem.create!(item: @item_1, invoice: @invoice_1, quantity: 10, unit_price: @item_1.unit_price)
       @invoice_item_2 = InvoiceItem.create!(item: @item_3, invoice: @invoice_1, quantity: 20, unit_price: @item_3.unit_price)
       @invoice_item_3 = InvoiceItem.create!(item: @item_10, invoice: @invoice_1, quantity: 1, unit_price: @item_10.unit_price)
+      @invoice_item_4 = InvoiceItem.create!(item: @item_15, invoice: @invoice_2, quantity: 1, unit_price: @item_15.unit_price)
       
       @discount1 = @merchant_1.bulk_discounts.create(title: "Small Discount", quantity_threshold: 5, percentage_discount: 20.0)
       @discount2 = @merchant_1.bulk_discounts.create(title: "Big Discount", quantity_threshold: 15, percentage_discount: 30.0)
@@ -89,12 +92,15 @@ RSpec.describe Invoice, type: :model do
     describe '#total_revenue' do
       it 'multiplies the sum of the unit price and quantity' do
         expect(@invoice_1.total_revenue).to eq(822)
+        expect(@invoice_2.total_revenue).to eq(10)
       end
     end
 
     describe '#total_revenue_for_merchant' do
       it 'should return the total revenue for that merchant invoice' do
         expect(@invoice_1.total_revenue_for_merchant(@merchant_1)).to eq(380)
+        expect(@invoice_1.total_revenue_for_merchant(@merchant_3)).to eq(442)
+        expect(@invoice_2.total_revenue_for_merchant(@merchant_1)).to eq(10)
       end
     end
 
@@ -108,21 +114,17 @@ RSpec.describe Invoice, type: :model do
     describe "#discount_revenue" do
       it 'should return the total bulk discount applied' do
         expect(@invoice_1.discount_revenue).to eq(146.2)
+        expect(@invoice_2.discount_revenue).to eq(0)
       end
     end
 
     describe "#merch_discount_revenue" do
       it 'should return the total bulk discount applied for that invoice' do
         expect(@invoice_1.merch_discount_revenue(@merchant_1)).to eq(102.0)
-        expect(@merchant_3.merch_discount_revenue).to eq(44.2)
+        expect(@invoice_1.merch_discount_revenue(@merchant_3)).to eq(44.2)
+        expect(@invoice_2.merch_discount_revenue(@merchant_1)).to eq(0)
       end
     end
-
-    # describe "#merch_discount_revenue" do
-    #   it 'should return the total bulk discount for the merchant with bulk discount applied' do
-    #     expect(@invoice_1.merch_discount_revenue).to eq(102.0)
-    #   end
-    # end
   end
 
   describe "class method" do
