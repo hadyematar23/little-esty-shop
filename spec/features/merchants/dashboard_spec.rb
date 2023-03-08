@@ -1,58 +1,73 @@
 require 'rails_helper'
 
 RSpec.describe 'Merchant Dashboard Feature Spec' do
+  
   before(:each) do
-    repo_call = File.read('spec/fixtures/repo_call.json')
-    stub_request(:get, 'https://api.github.com/repos/hadyematar23/little-esty-shop')
+    holiday_call = File.read("spec/fixtures/holiday_call.json")
+    stub_request(:get, 'https://date.nager.at/api/v3/NextPublicHolidays/US')
     .with(
       headers: {
         'Accept'=>'*/*',
         'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-        'Authorization'=>"Bearer #{ENV['github_token']}",
         'User-Agent'=>'Faraday v2.7.4'
-        }
+          }
     )
-    .to_return(status: 200, body: repo_call, headers: {})
+    .to_return(status: 200, body: holiday_call, headers: {})
+
+    # repo_call = File.read('spec/fixtures/repo_call.json')
+    # stub_request(:get, 'https://api.github.com/repos/hadyematar23/little-esty-shop')
+    # .with(
+    #   headers: {
+    #     'Accept'=>'*/*',
+    #     'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+    #     'Authorization'=>"Bearer #{ENV['github_token']}",
+    #     'User-Agent'=>'Faraday v2.7.4'
+    #     }
+    # )
+    # .to_return(status: 200, body: repo_call, headers: {})
     
-    contributors_call = File.read('spec/fixtures/contributors_call.json')
-    stub_request(:get, 'https://api.github.com/repos/hadyematar23/little-esty-shop/contributors')
-    .with(
-      headers: {
-        'Accept'=>'*/*',
-        'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-        'Authorization'=>"Bearer #{ENV['github_token']}",
-        'User-Agent'=>'Faraday v2.7.4'
-        }
-    )
-    .to_return(status: 200, body: contributors_call, headers: {})
+    # contributors_call = File.read('spec/fixtures/contributors_call.json')
+    # stub_request(:get, 'https://api.github.com/repos/hadyematar23/little-esty-shop/contributors')
+    # .with(
+    #   headers: {
+    #     'Accept'=>'*/*',
+    #     'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+    #     'Authorization'=>"Bearer #{ENV['github_token']}",
+    #     'User-Agent'=>'Faraday v2.7.4'
+    #     }
+    # )
+    # .to_return(status: 200, body: contributors_call, headers: {})
 
-    repo_call = File.read('spec/fixtures/pull_request_call.json')
-    stub_request(:get, 'https://api.github.com/repos/hadyematar23/little-esty-shop/pulls?state=closed')
-    .with(
-      headers: {
-        'Accept'=>'*/*',
-        'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-        'Authorization'=>"Bearer #{ENV['github_token']}",
-        'User-Agent'=>'Faraday v2.7.4'
-        }
-    )
-    .to_return(status: 200, body: repo_call, headers: {})
+    # repo_call = File.read('spec/fixtures/pull_request_call.json')
+    # stub_request(:get, 'https://api.github.com/repos/hadyematar23/little-esty-shop/pulls?state=closed')
+    # .with(
+    #   headers: {
+    #     'Accept'=>'*/*',
+    #     'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+    #     'Authorization'=>"Bearer #{ENV['github_token']}",
+    #     'User-Agent'=>'Faraday v2.7.4'
+    #     }
+    # )
+    # .to_return(status: 200, body: repo_call, headers: {})
 
-    commits_call = File.read('spec/fixtures/commits_call.json')
-    stub_request(:get, 'https://api.github.com/repos/hadyematar23/little-esty-shop/stats/contributors')
-    .with(
-      headers: {
-        'Accept'=>'*/*',
-        'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-        'Authorization'=>"Bearer #{ENV['github_token']}",
-        'User-Agent'=>'Faraday v2.7.4'
-         }
-    )
-    .to_return(status: 200, body: commits_call, headers: {})
+    # commits_call = File.read('spec/fixtures/commits_call.json')
+    # stub_request(:get, 'https://api.github.com/repos/hadyematar23/little-esty-shop/stats/contributors')
+    # .with(
+    #   headers: {
+    #     'Accept'=>'*/*',
+    #     'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+    #     'Authorization'=>"Bearer #{ENV['github_token']}",
+    #     'User-Agent'=>'Faraday v2.7.4'
+    #      }
+    # )
+    # .to_return(status: 200, body: commits_call, headers: {})
   
     ###### Merchants & Items ######
     @merchant1 = Merchant.create!(name: "Mel's Travels")
     @merchant2 = Merchant.create!(name: "Hady's Beach Shack")
+
+    @discounts1 = @merchant2.bulk_discounts.create(title: "Small Discount", quantity_threshold: 5, percentage_discount: 20.00)
+    @discounts2 = @merchant2.bulk_discounts.create(title: "Big Discount", quantity_threshold: 10, percentage_discount: 30.00)
 
     @item1 = Item.create!(name: "Salt", description: "it is salty", unit_price: 1200, merchant: @merchant1)
     @item2 = Item.create!(name: "Pepper", description: "it is peppery", unit_price: 1150, merchant: @merchant1)
@@ -221,11 +236,11 @@ RSpec.describe 'Merchant Dashboard Feature Spec' do
         visit "/merchants/#{@merchant2.id}/dashboard" 
         
         within "#invoice_items_info-#{@invoice17.id}" do
-          expect(page).to have_content("Created: #{@invoice17.created_at.strftime("%A, %B %e, %Y")}")
+          expect(page).to have_content("Item Invoice Id: #{@invoice17.id} Created: #{@invoice17.created_at.strftime("%A, %B%e, %Y")}")
         end
 
         within "#invoice_items_info-#{@invoice20.id}" do
-          expect(page).to have_content("Created: #{@invoice20.created_at.strftime("%A, %B %e, %Y")}")
+          expect(page).to have_content("Item Invoice Id: #{@invoice20.id} Created: #{@invoice20.created_at.strftime("%A, %B%e, %Y")}")
         end
       end
 
@@ -233,6 +248,18 @@ RSpec.describe 'Merchant Dashboard Feature Spec' do
         visit "/merchants/#{@merchant2.id}/dashboard" 
         expect(@invoice17.created_at.strftime("%A, %B %e, %Y")).to appear_before(@invoice19.created_at.strftime("%A, %B %e, %Y"))
         expect(@invoice19.created_at.strftime("%A, %B %e, %Y")).to appear_before(@invoice20.created_at.strftime("%A, %B %e, %Y"))
+      end
+    end
+
+    describe 'merchant bulk discounts' do
+      it 'should see link that will take me to bulk discounts index page' do
+        visit "/merchants/#{@merchant2.id}/dashboard"
+
+        expect(page).to have_link("Discounts")
+
+        click_link("Discounts")
+
+        expect(current_path).to eq("/merchants/#{@merchant2.id}/bulk_discounts")
       end
     end
   end

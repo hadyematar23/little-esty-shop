@@ -4,6 +4,7 @@ class Merchant < ApplicationRecord
   has_many :invoices, through: :invoice_items
   has_many :transactions, through: :invoices
   has_many :customers, through: :invoices
+  has_many :bulk_discounts
   enum status: ["enabled", "disabled"]
 
   def toggle_status
@@ -18,7 +19,6 @@ class Merchant < ApplicationRecord
     .order("transaction_count DESC")
     .limit(5)
   end
-  
 
   def unshipped_items
     invoices.select("invoice_items.status, invoices.*, items.name AS item_name")

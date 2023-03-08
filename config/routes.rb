@@ -29,4 +29,10 @@ Rails.application.routes.draw do
   patch '/items/:item_id', to: 'items#update'
   
   post '/merchants', to: "merchants#create"
+
+  resources :merchants, only: :dashboard do
+    resources :bulk_discounts, controller: "merchants/bulk_discounts"
+  end
+
+  # resources :bulk_discounts, only: :show
 end

@@ -3,53 +3,53 @@ require 'rails_helper'
 RSpec.describe '/admin', type: :feature do
   describe 'when I visit the admin dashboard' do
     before(:each) do
-      repo_call = File.read('spec/fixtures/repo_call.json')
-      stub_request(:get, 'https://api.github.com/repos/hadyematar23/little-esty-shop')
-      .with(
-        headers: {
-          'Accept'=>'*/*',
-          'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-          'Authorization'=>"Bearer #{ENV['github_token']}",
-          'User-Agent'=>'Faraday v2.7.4'
-          }
-      )
-      .to_return(status: 200, body: repo_call, headers: {})
+    #   repo_call = File.read('spec/fixtures/repo_call.json')
+    #   stub_request(:get, 'https://api.github.com/repos/hadyematar23/little-esty-shop')
+    #   .with(
+    #     headers: {
+    #       'Accept'=>'*/*',
+    #       'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+    #       'Authorization'=>"Bearer #{ENV['github_token']}",
+    #       'User-Agent'=>'Faraday v2.7.4'
+    #       }
+    #   )
+    #   .to_return(status: 200, body: repo_call, headers: {})
       
-      contributors_call = File.read('spec/fixtures/contributors_call.json')
-      stub_request(:get, 'https://api.github.com/repos/hadyematar23/little-esty-shop/contributors')
-      .with(
-        headers: {
-          'Accept'=>'*/*',
-          'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-          'Authorization'=>"Bearer #{ENV['github_token']}",
-          'User-Agent'=>'Faraday v2.7.4'
-          }
-      )
-      .to_return(status: 200, body: contributors_call, headers: {})
+    #   contributors_call = File.read('spec/fixtures/contributors_call.json')
+    #   stub_request(:get, 'https://api.github.com/repos/hadyematar23/little-esty-shop/contributors')
+    #   .with(
+    #     headers: {
+    #       'Accept'=>'*/*',
+    #       'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+    #       'Authorization'=>"Bearer #{ENV['github_token']}",
+    #       'User-Agent'=>'Faraday v2.7.4'
+    #       }
+    #   )
+    #   .to_return(status: 200, body: contributors_call, headers: {})
 
-      repo_call = File.read('spec/fixtures/pull_request_call.json')
-      stub_request(:get, 'https://api.github.com/repos/hadyematar23/little-esty-shop/pulls?state=closed')
-      .with(
-        headers: {
-          'Accept'=>'*/*',
-          'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-          'Authorization'=>"Bearer #{ENV['github_token']}",
-          'User-Agent'=>'Faraday v2.7.4'
-          }
-      )
-    .to_return(status: 200, body: repo_call, headers: {})
+    #   repo_call = File.read('spec/fixtures/pull_request_call.json')
+    #   stub_request(:get, 'https://api.github.com/repos/hadyematar23/little-esty-shop/pulls?state=closed')
+    #   .with(
+    #     headers: {
+    #       'Accept'=>'*/*',
+    #       'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+    #       'Authorization'=>"Bearer #{ENV['github_token']}",
+    #       'User-Agent'=>'Faraday v2.7.4'
+    #       }
+    #   )
+    # .to_return(status: 200, body: repo_call, headers: {})
 
-    commits_call = File.read('spec/fixtures/commits_call.json')
-    stub_request(:get, 'https://api.github.com/repos/hadyematar23/little-esty-shop/stats/contributors')
-    .with(
-      headers: {
-        'Accept'=>'*/*',
-        'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-        'Authorization'=>"Bearer #{ENV['github_token']}",
-        'User-Agent'=>'Faraday v2.7.4'
-         }
-    )
-    .to_return(status: 200, body: commits_call, headers: {})
+    # commits_call = File.read('spec/fixtures/commits_call.json')
+    # stub_request(:get, 'https://api.github.com/repos/hadyematar23/little-esty-shop/stats/contributors')
+    # .with(
+    #   headers: {
+    #     'Accept'=>'*/*',
+    #     'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+    #     'Authorization'=>"Bearer #{ENV['github_token']}",
+    #     'User-Agent'=>'Faraday v2.7.4'
+    #      }
+    # )
+    # .to_return(status: 200, body: commits_call, headers: {})
   
       ###### Merchants & Items ######
       @merchant1 = Merchant.create!(name: "Mel's Travels")
@@ -210,19 +210,17 @@ RSpec.describe '/admin', type: :feature do
         within "#invoice_info-#{@invoice20.id}" do
           expect(page).to have_link("#{@invoice20.id}", :href=>"/admin/invoices/#{@invoice20.id}")
         end
-
-
       end
 
       it "next to each id I see the date that invoice was created (ex: 'Monday, July 18, 2019')" do
         visit '/admin'
         
         within "#invoice_info-#{@invoice17.id}" do
-          expect(page).to have_content("Created: #{@invoice17.created_at.strftime("%A, %B %e, %Y")}")
+          expect(page).to have_content("ID number: #{@invoice17.id} Created: #{@invoice17.created_at.strftime("%A, %B%e, %Y")}")
         end
 
         within "#invoice_info-#{@invoice20.id}" do
-          expect(page).to have_content("Created: #{@invoice20.created_at.strftime("%A, %B %e, %Y")}")
+          expect(page).to have_content("ID number: #{@invoice20.id} Created: #{@invoice20.created_at.strftime("%A, %B%e, %Y")}")
         end
       end
 
@@ -232,6 +230,5 @@ RSpec.describe '/admin', type: :feature do
         expect(@invoice19.created_at.strftime("%A, %B %e, %Y")).to appear_before(@invoice20.created_at.strftime("%A, %B %e, %Y"))
       end
     end
-
   end
 end
