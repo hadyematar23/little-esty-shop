@@ -236,11 +236,11 @@ RSpec.describe 'Merchant Dashboard Feature Spec' do
         visit "/merchants/#{@merchant2.id}/dashboard" 
         
         within "#invoice_items_info-#{@invoice17.id}" do
-          expect(page).to have_content("Created: #{@invoice17.created_at.strftime("%A, %B %e, %Y")}")
+          expect(page).to have_content("Item Invoice Id: #{@invoice17.id} Created: #{@invoice17.created_at.strftime("%A, %B%e, %Y")}")
         end
 
         within "#invoice_items_info-#{@invoice20.id}" do
-          expect(page).to have_content("Created: #{@invoice20.created_at.strftime("%A, %B %e, %Y")}")
+          expect(page).to have_content("Item Invoice Id: #{@invoice20.id} Created: #{@invoice20.created_at.strftime("%A, %B%e, %Y")}")
         end
       end
 

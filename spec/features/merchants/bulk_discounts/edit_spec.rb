@@ -16,8 +16,6 @@ RSpec.describe "/merchants/:merchant_id/bulk_discounts/:bulk_discount_id/edit" d
       expect(page).to have_field(:percentage_discount, with: 30.0)
       expect(page).to have_field(:quantity_threshold, with: 10)
 
-      # click_link("Edit Discount #{@discount2.id}")
-
       fill_in :percentage_discount, with: 25
       fill_in :quantity_threshold, with: 15
 
